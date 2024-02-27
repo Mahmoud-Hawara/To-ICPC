@@ -6,6 +6,9 @@
     could be used in sum, oxr, multiplication,...
     you should take care that it works 1 based
     Don't forget `build()`
+    complexity: 
+    - build : O(n log n)
+    - add, prefix sum: O(n log n)
 
 ## 1D
 
@@ -55,29 +58,6 @@ void update(int index, int value)
 
 ## 2D
 
-
-```
-example: 
-input: 
-4 4
-1 2 3 9
-5 7 8 0
-2 3 5 5
-1 7 2 3
-6
-1 1 1 4 4 
-1 2 2 4 3
-2 2 2 -7
-1 2 2 4 3
-2 1 1 0
-1 1 1 4 4
-
-ans: 
-63
-32
-18
-48
-```
 
 ``` c++
 int n, m;
