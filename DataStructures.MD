@@ -100,3 +100,95 @@ void update(int x, int y, int value)
 }
 
 ```
+
+### segtree 
+```
+struct segtree
+{
+  int size;
+  ll mx = 2e16;
+  vector<pair<ll, ll>> minn;
+  vector<int> op;
+  pair<ll, ll> merge(pair<ll, ll> a, pair<ll, ll> b)
+  {
+    if (a.first <= b.first)
+      return a;
+    else
+      return b;
+  }
+  void lazy(int x, int lx, int rx)
+  {
+    if (op[x] && lx != rx - 1)
+    {
+      op[2 * x + 1] += op[x];
+      op[2 * x + 2] += op[x];
+      int z = min(40, op[x]);
+      if (minn[2 * x + 1].second)
+      {
+        minn[2 * x + 1].first /= (1ll << z);
+      }
+      if (minn[2 * x + 2].second)
+      {
+        minn[2 * x + 2].first /= (1ll << z);
+      }
+      op[x] = 0;
+    }
+  }
+  void init(int n)
+  {
+    size = 1;
+    while (size < n)
+      size *= 2;
+    op.assign(size * 2, 0);
+    minn.assign(size * 2, {mx, 0ll});
+  }
+  void set(int i, ll v, int x, int lx, int rx, ll z)
+  {
+    if (rx - lx == 1)
+    {
+      if (minn[x].first > v)
+      {
+        minn[x].first = v;
+        minn[x].second = z;
+        // cout << lx << " " << v << " " << z << '\n';
+      }
+      return;
+    }
+    lazy(x, lx, rx);
+    int m = (lx + rx) / 2;
+    if (i < m)
+    {
+      set(i, v, 2 * x + 1, lx, m, z);
+    }
+    else
+      set(i, v, 2 * x + 2, m, rx, z);
+    minn[x] = merge(minn[2 * x + 1], minn[2 * x + 2]);
+  }
+  void set(int i, pair<ll, ll> x)
+  {
+    set(i, x.first, 0, 0, size, x.second);
+  }
+  pair<ll, ll> fmin(int l, int r, int x, int lx, int rx)
+  {
+    if (lx >= r || l >= rx)
+    {
+      return {mx, 0ll};
+    }
+    if (l <= lx && rx <= r)
+    {
+      return minn[x];
+    }
+    lazy(x, lx, rx);
+    int m = (lx + rx) / 2;
+    return merge(fmin(l, r, 2 * x + 1, lx, m), fmin(l, r, 2 * x + 2, m, rx));
+  }
+  pair<ll, ll> fmin(int l, int r)
+  {
+    return fmin(l, r, 0, 0, size);
+  }
+  void daypassed()
+  {
+    op[0] += 1;
+  }
+};
+```
