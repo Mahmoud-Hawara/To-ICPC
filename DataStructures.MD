@@ -101,8 +101,15 @@ void update(int x, int y, int value)
 
 ```
 
-### segtree 
+# segtree 
 ```
+-the segmant operation is from l to r-1 `[l,r[` 
+-changing the merge for different operations  
+complexity: 
+- build : O(n)
+- add: O(log n)
+```
+```cpp
 struct segtree
 {
   int size;
@@ -150,7 +157,6 @@ struct segtree
       {
         minn[x].first = v;
         minn[x].second = z;
-        // cout << lx << " " << v << " " << z << '\n';
       }
       return;
     }
