@@ -278,6 +278,9 @@ struct segtree{
         }
     }
 
+
+
+
     void update_x(int x, int lx, int rx, int a, int b, int new_val) {
     if (lx != rx-1) {
         int mx = (lx + rx) / 2;
@@ -352,4 +355,76 @@ void fn()
         }
     }
 }
+```
+
+
+# Mo algorithm
+
+```
+   0 based
+   Don't forget to sort 
+   check for overflow
+  complexity: O((q+n) * sqrt(n))
+```
+
+``` c++
+int n, m, len, a[N], fr1[N], fr2[N], ans[N], res;
+struct query
+{
+    int l, r, idx;
+} q[N];
+bool cmp(query one, query two)
+{
+    if (one.l / len != two.l / len)
+        return one.l < two.l;
+    if ((one.l / len) & 1)
+        return two.r < one.r;
+    else
+        return one.r < two.r;
+}
+void add(int i)
+{
+    int cur = ++fr1[a[i]];
+    fr2[cur - 1]--;
+    fr2[cur]++;
+    res = max(res, cur);
+}
+void remove(int i)
+{
+    int cur = --fr1[a[i]];
+    fr2[cur + 1]--;
+    fr2[cur]++;
+    if (fr2[res] == 0)
+        res--;
+}
+void solve()
+{
+    scanf("%d %d", &n, &m);
+    len = (sqrt(n)) + 1;
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+    for (int i = 0; i < m; i++)
+    {
+        int l, r;
+        scanf("%d %d", &q[i].l, &q[i].r);
+        q[i].idx = i;
+    }
+    sort(q, q + m, cmp);
+    int curl = 1, curr = 0;
+    for (int i = 0; i < m; ++i)
+    {
+        while (curl < q[i].l)
+            remove(curl++);
+        while (curl > q[i].l)
+            add(--curl);
+        while (curr < q[i].r)
+            add(++curr);
+        while (curr > q[i].r)
+            remove(curr--);
+        ans[q[i].idx] = res;
+    }
+    for (int i = 0; i < m; i++)
+        printf("%d\n", ans[i]);
+}
+
 ```
