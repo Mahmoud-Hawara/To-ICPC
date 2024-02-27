@@ -568,7 +568,42 @@ int get(int l, int r,int indx)
   int ret = max(table[indx][i][l], table[indx][i][r - (1 << i) + 1]);
   return ret;
 }
-
+```
+### 2D
+```cpp
+int f[N][N][10][10];
+int query(int l, int d, int r, int u) {
+    int k1 = std::__lg(r - l);
+    int k2 = std::__lg(u - d);
+    return std::max({f[l][d][k1][k2], f[r - (1 << k1)][d][k1][k2], f[l][u - (1 << k2)][k1][k2], f[r - (1 << k1)][u - (1 << k2)][k1][k2]});
+}
+// build
+for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (a[i][j] == 0) {
+                f[i][j][0][0] = 0;
+            } else {
+                f[i][j][0][0] = 1;
+                if (i > 0 && j > 0) {
+                    f[i][j][0][0] += std::min({f[i - 1][j][0][0], f[i][j - 1][0][0], f[i - 1][j - 1][0][0]});
+                }
+            }
+        }
+    }
+for (int k1 = 0; k1 < 10; k1++) {
+        for (int k2 = 0; k2 < 10; k2++) {
+            for (int i = 0; i + (1 << k1) <= n; i++) {
+                for (int j = 0; j + (1 << k2) <= m; j++) {
+                    if (k1 == 0 && j + (2 << k2) <= m) {
+                        f[i][j][k1][k2 + 1] = std::max(f[i][j][k1][k2], f[i][j + (1 << k2)][k1][k2]);
+                    }
+                    if (i + (2 << k1) <= n) {
+                        f[i][j][k1 + 1][k2] = std::max(f[i][j][k1][k2], f[i + (1 << k1)][j][k1][k2]);
+                    }
+                }
+            }
+        }
+    }
 ```
 # Mo algorithm
 
