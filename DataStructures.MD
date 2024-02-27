@@ -1,21 +1,18 @@
-// to ICPC
 
 
 # Fenwick Tree
 
-## 1D
+    binary indexed tree to get sum on range with update on a single value.
+    could be used in sum, oxr, multiplication,...
+    you should take care that it works 1 based
+    Don't forget `build()`
 
-Don't forget `build()`
+## 1D
 
 ``` c++ 
 
 int n;
 vector<int> a, bit;
-/*
-    binary indexed tree to get sum on range with update on a single value.
-    could be used in sum, oxr, multiplication,...
-    
-*/
 // O(log n)
 void add(int index, int toAdd)
 {
@@ -58,13 +55,8 @@ void update(int index, int value)
 
 ## 2D
 
-    binary indexed tree to get sum on range with update on a single value.
-    could be used in sum, oxr, multiplication,...
-you should take care that it works 1 based
-
-``` c++
-
-/*
+    example: 
+```
 input: 
 4 4
 1 2 3 9
@@ -84,7 +76,9 @@ ans:
 32
 18
 48
-*/
+```
+
+``` c++
 int n, m;
 vector<vector<int>> a, bit;
 // O(log n* log m)  
