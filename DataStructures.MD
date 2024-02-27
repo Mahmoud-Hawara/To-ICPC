@@ -198,6 +198,26 @@ struct segtree
   }
 };
 ```
+## farest postion bigger that or equal to k from l to r-1
+```cpp
+int calc(int l, int r, int x, int lx, int rx, int k)
+  {
+    if (rx <= l || lx >= r || arr[x].first < k)
+      return -1;
+    if (rx - lx == 1)
+      return arr[x].second;
+    int m = (lx + rx) / 2;
+    int res = -1;
+    res = calc(l, r, 2 * x + 2, m, rx, k);
+    if (res == -1)
+      res = calc(l, r, 2 * x + 1, lx, m, k);
+    return res;
+  }
+  int calc(int l, int r, int k)
+  {
+    return calc(l, r, 0, 0, size, k);
+  }
+```
 ## 2D
 ``` cpp
 ll a[1001][1001];    
