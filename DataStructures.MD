@@ -55,8 +55,9 @@ void update(int index, int value)
 
 ## 2D
 
-    example: 
+
 ```
+example: 
 input: 
 4 4
 1 2 3 9
