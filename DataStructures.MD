@@ -489,7 +489,7 @@ int main()
 ```
 #sparse table
 ```
-complexity: O(nlogn) build and O(1) to answer queries for max ,min queries O(logn).
+complexity: O(nlogn) build and O(1) to answer queries for max ,min like queries -------  O(logn) for sum queries.
 ```
 ```cpp
 long long st[K + 1][MAXN];
