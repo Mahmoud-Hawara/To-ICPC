@@ -428,3 +428,48 @@ void solve()
 }
 
 ```
+
+# square root decomposition
+
+```
+  division operation has high cost. save it in a variable.
+  complexity : O(sqrt(n)*O(operation time)
+```
+
+``` c++
+ll n, sqr, q;
+void solve() {
+    cin >> n;       sqr = (int)ceil(sqrt(n));
+    vector<ll>a(n), block(sqr);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        block[i / sqr] += a[i];
+    }
+    cin >> q;
+    while (q--)
+    {
+        ll t, l, r, sum = 0, idx, val;
+        cin >> t;
+        if (t == 1) {//answer query
+            cin >> l >> r;
+            --l, --r;
+            for (int i = l; i <= r;) {
+                if (i % sqr == 0 and i + sqr - 1 <= r) {// block inside the range 
+                    sum += block[i];
+                    i += sqr;
+                }
+                else//brute force movement
+                    sum += a[i++];
+            }
+        }
+        else {//update
+            cin >> idx >> val;
+            idx--;
+            block[idx / sqr] -= a[idx];//undo
+            a[idx] = val;//update array
+            block[idx / sqr] += a[idx];//do
+        }
+    }
+}
+
+```
