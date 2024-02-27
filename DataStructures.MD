@@ -720,3 +720,88 @@ void solve() {
 }
 
 ```
+# STLS (Orderd Set, Priority queue, list)
+
+```cpp
+
+// FOR Orderd Set
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace __gnu_pbds; 
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update> 
+
+// FOR Priority Queue
+// Here we are sorting based on the processing time
+// if the priority is same and we are sorting
+// in descending order if the priority is same.
+// Else we are sorting in ascending order
+// on the priority of the tasks given to us
+struct compare {
+    bool operator()(jobs a, jobs b)
+    {
+        if (a.priority == b.priority) {
+            return a.processing < b.processing;
+        }
+        return a.priority > b.priority;
+    }
+};
+
+// function for printing the elements in a list
+void showlist(list<int> g)
+{
+    list<int>::iterator it;
+    for (it = g.begin(); it != g.end(); ++it)
+        cout << '\t' << *it;
+    cout << '\n';
+}
+
+void solve()
+{
+    ordered_set o_set;  
+    o_set.insert(5);   
+
+    // Finding the second smallest element 
+    // in the set using * because 
+    //  find_by_order returns an iterator 
+    cout << *(o_set.find_by_order(1)) << endl; 
+  
+    // Finding the number of elements 
+    // strictly less than k=4 
+    cout << o_set.order_of_key(4) << endl;
+
+    priority_queue<jobs, vector<jobs>, compare> pq;
+
+    list<int> gqlist1, gqlist2;
+ 
+    for (int i = 0; i < 10; ++i) {
+        gqlist1.push_back(i * 2);
+        gqlist2.push_front(i * 3);
+    }
+    cout << "\nList 1 (gqlist1) is : ";
+    showlist(gqlist1);
+ 
+    cout << "\nList 2 (gqlist2) is : ";
+    showlist(gqlist2);
+ 
+    cout << "\ngqlist1.front() : " << gqlist1.front();
+    cout << "\ngqlist1.back() : " << gqlist1.back();
+ 
+    cout << "\ngqlist1.pop_front() : ";
+    gqlist1.pop_front();
+    showlist(gqlist1);
+ 
+    cout << "\ngqlist2.pop_back() : ";
+    gqlist2.pop_back();
+    showlist(gqlist2);
+ 
+    cout << "\ngqlist1.reverse() : ";
+    gqlist1.reverse();
+    showlist(gqlist1);
+ 
+    cout << "\ngqlist2.sort(): ";
+    gqlist2.sort();
+    showlist(gqlist2);
+
+    return;
+}
+```
