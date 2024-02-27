@@ -487,7 +487,89 @@ int main()
     return 0;
 }
 ```
+#sparse table
+```
+complexity: O(nlogn) build and O(1) to answer queries for max ,min queries O(logn).
+```
+```cpp
+long long st[K + 1][MAXN];
+//init
+std::copy(array.begin(), array.end(), st[0]);
 
+for (int i = 1; i <= K; i++)
+    for (int j = 0; j + (1 << i) <= N; j++)
+        st[i][j] = st[i - 1][j] + st[i - 1][j + (1 << (i - 1))];
+
+//compute sum from l to r
+long long sum = 0;
+for (int i = K; i >= 0; i--) {
+    if ((1 << i) <= R - L + 1) {
+        sum += st[i][L];
+        L += 1 << i;
+    }
+}
+
+// log precalculation
+int lg[MAXN+1];
+lg[1] = 0;
+for (int i = 2; i <= MAXN; i++)
+    lg[i] = lg[i/2] + 1;
+
+//Alternatively, log can be computed on the fly in constant space and time:
+// C++20
+#include <bit>
+int log2_floor(unsigned long i) {
+    return std::bit_width(i) - 1;
+}
+
+// pre C++20
+int log2_floor(unsigned long long i) {
+    return i ? __builtin_clzll(1) - __builtin_clzll(i) : -1;
+}
+
+
+//Afterwards we need to precompute the Sparse Table structure. This time we define $f$ with $f(x, y) = \min(x, y)$.
+
+int st[K + 1][MAXN];
+
+std::copy(array.begin(), array.end(), st[0]);
+
+for (int i = 1; i <= K; i++)
+    for (int j = 0; j + (1 << i) <= N; j++)
+        st[i][j] = min(st[i - 1][j], st[i - 1][j + (1 << (i - 1))]);
+
+//And the minimum of a range $[L, R]$ can be computed with:
+
+int i = lg[R - L + 1];
+int minimum = min(st[i][L], st[i][R - (1 << i) + 1]);
+
+
+int lg[N+1];
+int table[6][17][N];
+void build()
+{
+    lg[1] = 0;
+    for (int i = 2; i <= n; i++)
+    lg[i] = lg[i/2] + 1;
+    
+    for(int i = 0; i < n; i++)
+      for(int j = 0; j < m; j++)
+        table[j][0][i] = arr[i][j];
+
+    for(int k=0;k<m;k++)
+      for (int i = 1; i <= 16; i++)
+          for (int j = 0; j + (1 << i) <= n; j++)
+              table[k][i][j] = max(table[k][i - 1][j], table[k][i - 1][j + (1 << (i - 1))]);
+}
+int get(int l, int r,int indx)
+{
+  if(l>r)return 0;
+  int i = lg[r - l + 1];
+  int ret = max(table[indx][i][l], table[indx][i][r - (1 << i) + 1]);
+  return ret;
+}
+
+```
 # Mo algorithm
 
 ```
