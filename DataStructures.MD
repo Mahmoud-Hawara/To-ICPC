@@ -356,7 +356,137 @@ void fn()
     }
 }
 ```
+### Segment with Pashka
+#### inversions 2
 
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define IO ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+#define ll long long
+
+const int N = 2e5 + 5;
+const ll MOD = 1e9 + 7;
+
+// This problem is the reversed version of the previous one. 
+// There was a permutation pi of n elements, 
+// for each i we wrote down the number ai the number of j such that j<i and pj>pi 
+// Restore the original permutation for the given ai.
+
+ll n, a[N], seg[4 * N], pre, ans[N];
+ 
+void build(ll x, ll lx, ll rx)
+{
+    if (lx == rx)return void(seg[x] = 1);
+    ll mx = (lx + rx) >> 1;
+    build(2 * x, lx, mx);
+    build(2 * x + 1, mx + 1, rx);
+    seg[x] = seg[2 * x] + seg[2 * x + 1];
+}
+ 
+void update(ll x, ll lx, ll rx, ll pos)
+{
+    if (pos < lx || pos > rx)return;
+    if (lx == rx)return void(seg[x] = 0);
+    ll mx = (lx + rx) >> 1;
+    update(2 * x, lx, mx, pos);
+    update(2 * x + 1, mx + 1, rx, pos);
+    seg[x] = seg[2 * x] + seg[2 * x + 1];
+}
+ 
+ll query(ll x, ll lx, ll rx, ll k)
+{
+    if (lx == rx)return lx;
+    ll mx = (lx + rx) >> 1;
+    if (seg[2 * x + 1] >= k)return query(2 * x + 1, mx + 1, rx, k);
+    return query(2 * x, lx, mx, k - seg[2 * x + 1]);
+}
+ 
+int main()
+{
+    IO
+    cin >> n;
+    build(1, 1, n);
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> a[i];
+    }
+    for (int i = n; i >= 1; i--)
+    {
+       ans[i] = query(1, 1, n, a[i] + 1);
+       update(1, 1, n, ans[i]);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        cout << ans[i] << ' ';
+    }
+    return 0;
+}
+```
+
+#### Nested Segments
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define IO ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+#define ll long long
+
+const int N = 2e5 + 5;
+const ll MOD = 1e9 + 7;
+
+// Given an array of 2n numbers, 
+// each number from 1 to n in it occurs exactly twice. 
+// We say that the segment y is nested inside the segment x if both occurrences 
+// of the number y are between the occurrences of the number x Find for each segment i 
+// how many segments that are nested inside it.
+
+ll n, R[N], seg[4 * N], x, ans[N];
+vector<ll>L;
+ 
+void update(ll x, ll lx, ll rx, ll pos, ll value)
+{
+    if (pos < lx || pos > rx)return;
+    if (lx == rx)return void(seg[x] = value);
+    ll mx = (lx + rx) >> 1;
+    update(2 * x, lx, mx, pos, value);
+    update(2 * x + 1, mx + 1, rx, pos, value);
+    seg[x] = seg[2 * x] + seg[2 * x + 1];
+}
+ 
+ll query(ll x, ll lx, ll rx, ll r)
+{
+    if (r < lx)return 0;
+    if (rx <= r)return seg[x];
+    ll mx = (lx + rx) >> 1;
+    return query(2 * x, lx, mx, r) + query(2 * x + 1, mx + 1, rx, r);
+}
+ 
+int main()
+{
+    scanf("%lld", &n);
+    for (int i = 1; i <= 2 * n; i++)
+    {
+        scanf("%lld", &x);
+        if (R[x] == -1)R[x] = i, update(1, 1, 2 * n, i, 1);
+        else L.push_back(x), R[x] = -1;
+    }
+    for (auto l : L)
+    {
+        ans[l] =  query(1, 1, 2 * n, R[l] - 1);
+        update(1, 1, 2 * n, R[l], 0);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        printf("%lld ", ans[i]);
+    }
+    return 0;
+}
+```
 
 # Mo algorithm
 
