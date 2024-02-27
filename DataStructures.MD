@@ -3,9 +3,13 @@
 # Fenwick Tree
 
 binary indexed tree to get sum on range with update on a single value.
+
 could be used in sum, oxr, multiplication,...
+
 you should take care that it works 1 based
+
 Don't forget `build()`
+
 complexity: 
 - build : O(n log n)
 - add, prefix sum: O(n log n)
