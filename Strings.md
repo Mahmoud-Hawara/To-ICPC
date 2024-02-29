@@ -527,6 +527,134 @@ vector<int> manacher(string s) {
     return vector<int>(begin(res) + 1, end(res) - 1);
 }
 ```
+## complete compare example 
+```cpp
+#include<bits/stdc++.h>
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include<set>
+#include<vector>
+#include<map>
+#include<list>
+#include<deque>
+#define ll long long
+
+using namespace std;
+
+
+    vector<vector<int>> c; 
+
+int n;
+const int N = 4e5+5;
+const ll min_num=999999999999999;
+int lg[N+1];
+void pre()
+{
+  lg[1] = 0;
+  for (int i = 2; i <= N; i++)
+    lg[i] = lg[i/2] + 1;
+
+}
+int compare(int i, int j, int l) {
+    int k=lg[l];
+    pair<int, int> a = {c[k][i], c[k][(i+l-(1 << k))%n]};
+    pair<int, int> b = {c[k][j], c[k][(j+l-(1 << k))%n]};
+    return a == b ? 0 : a < b ? -1 : 1;
+}
+bool cmp(pair<int,int>a,pair<int,int>b)
+{
+  int x=compare(a.first,b.first,min(a.second-a.first+1,b.second-b.first+1));
+  // cout<<x<<" "<<a.first<<" "<<a.second<<" "<<b.first<<" "<<b.second<<'\n';
+  if(x==-1)return 1;
+  if(x==1)return 0;
+  if(a.second-a.first+1<b.second-b.first+1)return 1;
+  if(a.second-a.first+1>b.second-b.first+1)return 0;
+  return a<b;
+}
+void count_sort(vector<int>&p,vector<int>&c)
+{
+     int n=p.size();
+
+        vector<int>cnt(n);
+        for(auto x:c)cnt[x]++;
+
+        vector<int> p_new(n);
+        vector<int>pos(n);
+        pos[0]=0;
+        for(int i=1;i<n;i++)pos[i]=pos[i-1]+cnt[i-1];
+        for(auto x:p)
+        {
+            p_new[pos[c[x]]]=x;
+            pos[c[x]]++;
+        }
+
+  p=p_new;
+
+}
+
+int main() {
+  pre();
+    vector<string>vs;
+    string s;
+    cin>>s;
+    s+="$";
+    n=s.size();
+    c.resize( 22 , vector<int> (n, 0));
+    vector<int>p(n);
+    //k=0
+    {
+        vector<pair<char,int>>a(n);
+        for(int i=0;i<n;i++)a[i]={s[i],i};
+        sort(a.begin(),a.end());
+        for(int i=0;i<n;i++)p[i]=a[i].second;
+        c[0][p[0]]=0;
+        for(int i=1;i<n;i++)
+        {
+            if(a[i].first==a[i-1].first)c[0][p[i]]=c[0][p[i-1]];
+            else c[0][p[i]]=c[0][p[i-1]]+1;
+        }
+    }
+
+    int k=0;
+    while((1<<k) <n)
+    {
+
+        for(int i=0;i<n;i++)p[i]=(p[i]-(1<<k)+n)%n;
+        count_sort(p,c[k]);
+        c[k+1][p[0]]=0;
+
+        for(int i=1;i<n;i++)
+            {
+                pair<int,int>now={c[k][p[i]],c[k][(p[i]+(1<<k))%n]};
+                pair<int,int>prev={c[k][p[i-1]],c[k][(p[i-1]+(1<<k))%n]};
+                if(now==prev)c[k+1][p[i]]=c[k+1][p[i-1]];
+                else c[k+1][p[i]]=c[k+1][p[i-1]]+1;
+            }
+            // c=c[k+1];
+            k++;
+
+    }
+    int q;
+    cin>>q;
+    vector<pair<int,int>>qss;
+    for(int i=0;i<q;i++)
+    {
+      int l,r;
+      cin>>l>>r;
+      l--,r--;
+      qss.push_back({l,r});
+    }
+    sort(qss.begin(),qss.end(),cmp);
+    for(auto x:qss)
+    {
+      cout<<x.first+1<<" "<<x.second+1<<'\n';
+    }
+    return 0;
+}
+
+
+```
 ##some primes under 100
 ```
 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
