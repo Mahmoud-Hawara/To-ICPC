@@ -498,8 +498,7 @@ int main() {
 ```
 #manacher
 ```
-Given string  $s$  with length $n$ . Find all the pairs $(i, j)$  such that substring $s[i\dots j]$  is a palindrome. String  $t$  is a palindrome when  
-$t = t_{rev}$  ( $t_{rev}$  is a reversed string for  $t$ ).
+Given string  $s$  with length $n$ . Find all the pairs (i, j)  such that substring s[i....j]  is a palindrome.
 ```
 ```cpp
 
