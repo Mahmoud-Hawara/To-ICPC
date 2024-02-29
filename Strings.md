@@ -72,9 +72,13 @@ vector<int> z_function(string s) {
     return z;
 }
 ```
-#ahocorasick
+#aho-corasick
 ```
-finds fail links in trie using prefix function in o(n*log(n))
+The Aho-Corasick algorithm allows us to quickly search for multiple patterns in a text. The set of pattern strings is also called a dictionary. We will denote the total length of its constituent strings by  
+$m$  and the size of the alphabet by  
+$k$ . The algorithm constructs a finite state automaton based on a trie in  
+$O(m k)$  time and then uses it to process the text.
+finds fail links in trie using prefix function.
 ```
 ``` cpp
 const int N = 2e5 + 5;
@@ -493,6 +497,10 @@ int main() {
 
 ```
 #manacher
+```
+Given string  $s$  with length $n$ . Find all the pairs $(i, j)$  such that substring $s[i\dots j]$  is a palindrome. String  $t$  is a palindrome when  
+$t = t_{rev}$  ( $t_{rev}$  is a reversed string for  $t$ ).
+```
 ```cpp
 
 vector<int> manacher_odd(string s) {
