@@ -94,7 +94,7 @@ void solve() {
 	}
 }
 ```
-#dijkestra
+# dijkestra
 ```
 time: O(E*log(V))
 ```
