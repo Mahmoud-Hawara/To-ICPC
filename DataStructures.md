@@ -487,7 +487,7 @@ int main()
     return 0;
 }
 ```
-#sparse table
+# sparse table
 ```
 complexity: O(nlogn) build and O(1) to answer queries for max ,min like queries -------  O(logn) for sum queries.
 ```

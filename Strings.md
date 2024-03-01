@@ -72,7 +72,7 @@ vector<int> z_function(string s) {
     return z;
 }
 ```
-#aho-corasick
+# aho-corasick
 ```
 The Aho-Corasick algorithm allows us to quickly search for multiple patterns in a text. The set of pattern strings is also called a dictionary. We will denote the total length of its constituent strings by  
 $m$  and the size of the alphabet by  
@@ -172,7 +172,7 @@ struct ACA
   }
 };
 ```
-##example usage 
+## example usage 
 ```cpp
 ll dp[N];
 ll solve(int i)
@@ -496,7 +496,7 @@ int main() {
 }
 
 ```
-#manacher
+# manacher
 ```
 Given string  $s$  with length $n$ . Find all the pairs (i, j)  such that substring s[i....j]  is a palindrome.
 ```
@@ -655,11 +655,11 @@ int main() {
 
 
 ```
-##some primes under 100
+## some primes under 100
 ```
 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
 ```
-##string stream example
+## string stream example
 ```cpp
     cin >> m;
     cin.ignore();
