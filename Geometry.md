@@ -803,3 +803,13 @@ double area(const vector<point>& fig) {
     return fabs(res) / 2;
 }
 ```
+# Regular polygon
+- The sum of the interior angles = $(2n – 4)$ * $right Angles$
+- interior angle of a regular polygon is $[(2n – 4) × 90°] / n$
+
+### Area of regular polygon.
+![Screenshot 2024-03-01 202155](https://github.com/Mahmoud-Hawara/To-ICPC/assets/66100565/ddf2394d-df00-44fd-87c5-7489e8ae8f5e)
+
+
+![Screenshot 2024-03-01 202206](https://github.com/Mahmoud-Hawara/To-ICPC/assets/66100565/10b225bd-f9fb-42af-9013-2ef342242bc4)
+
