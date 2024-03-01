@@ -1023,7 +1023,6 @@ int FactN_primePower(int n,int p){//O(log n base p)   ||| n should be the factor
 ll grayCode(ll i){
 	return (i ^ (i>>1));
 }
-//
 void printGrayCode(ll len){
 	for(int i=0;i< (1<<len)-1;i++){
 		bitset<4>a(i);
@@ -1032,4 +1031,5 @@ void printGrayCode(ll len){
 		cout<< a<<"\t\t";
 		cout<<__builtin_popcount(grayCode(i))<<endl; 
 	}
-}```
+}
+```
