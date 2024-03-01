@@ -425,7 +425,64 @@ int main()
     return 0;
 }
 ```
-
+#### Max subarray sum
+```c++
+class segmentTree {
+	struct data
+	{
+		ll best, sum, pref, suff;
+		data(ll val) {
+			sum = val;
+			best = pref = suff = max(0LL, val);
+		}
+	};
+	vector<data>tree;
+public:
+	segmentTree(int n = N) {
+		tree.assign(4 * n, 0);
+	}
+	ll curBest() {
+		return tree[1].best;
+	}
+	void build(const vector<ll>& v, int st, int en, int p) {
+		if (st == en)return tree[p] = data(v[st]), void();
+		build(v, st, (st + en) / 2, 2 * p);
+		build(v, (st + en) / 2 + 1, en, 2 * p + 1);
+		tree[p] = operation(tree[2 * p], tree[2 * p + 1]);
+	}
+	void update(int idx, int val, int st, int en, int p) {
+		if (idx<st or idx>en)return;
+		if (st == en) return tree[p] = data(val), void();
+		update(idx, val, st, (st + en) / 2, 2 * p);
+		update(idx, val, (st + en) / 2 + 1, en, 2 * p + 1);
+		tree[p] = operation(tree[2 * p], tree[2 * p + 1]);
+	}
+	data operation(data l, data r) {
+		data res(0);
+		res.sum = l.sum + r.sum;
+		res.pref = max(l.pref, l.sum + r.pref);
+		res.suff = max(r.suff, r.sum + l.suff);
+		res.best = max({ l.best,r.best,l.suff + r.pref });
+		return res;
+	}
+};
+void solve() {
+	int n, m, x, y;
+	cin >> n >> m;
+	vector<ll>v(n + 1);
+	for (int i = 1; i <= n; i++)
+		cin >> v[i];
+	segmentTree tr;
+	tr.build(v, 1, n, 1);
+	cout << tr.curBest() << endl;
+	while (m--)
+	{
+		cin >> x >> y;
+		tr.update(x + 1, y, 1, n, 1);
+		cout << tr.curBest() << endl;
+	}
+}
+```
 #### Nested Segments
 
 ```cpp
