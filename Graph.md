@@ -180,6 +180,49 @@ void union_sets(int a, int b) {
     }
 }
 ```
+
+## get path 
+
+``` c++ 
+struct DSU {
+	vector<ll>par, siz, st, en, nxt;
+	DSU(int n) {
+		par.resize(n + 1);
+		siz.resize(n + 1);
+		st.resize(n + 1);
+		en.resize(n + 1);
+		nxt.resize(n + 1);
+		iota(par.begin(), par.end(), 0);
+		iota(st.begin(), st.end(), 0);
+		iota(en.begin(), en.end(), 0);
+		fill(siz.begin(), siz.end(), 1);
+	}
+	ll parent(ll u) {
+		if (u == par[u])return u;
+		return par[u] = parent(par[u]);
+	}
+	void join(ll u, ll v) {
+		u = parent(u);
+		v = parent(v);
+		if (u == v)return;
+		if (siz[u] > siz[v])
+			swap(u, v);
+		par[u] = v;
+		siz[v] += siz[u];
+		nxt[en[v]] = st[u];
+		en[v] = en[u];
+	}
+	void print() {
+		int u = parent(1);
+		while (u)
+		{
+			cout << u << " ";
+			u = nxt[u];
+		}
+	}
+};
+```
+
 ## isbipartite using dsu
 ```cpp
 void make_set(int v) {
