@@ -1,47 +1,97 @@
 # LCA
 - build in $O(nlogn)$.
 - Query in $O(logn)$.
+- don't forget to `intit()` after taking $n$ as input.
+- don't forget to `start()` before quering
 ```cpp
-const int L = 25;
-ll up[N][L], tin[N], tout[N], timer;
-
-void dfs(int v, int p)
-{
-    tin[v] = ++timer;
-    up[v][0] = p;
-    for (int i = 1; i < L; ++i)
-        up[v][i] = up[up[v][i-1]][i-1];
-
-    for (int u : adj[v]) {
-        if (u != p)
-            dfs(u, v);
-    }
-
-    tout[v] = ++timer;
+vector<vector<ll>>anc, graph, mx, mn;
+vector<ll>dpth;
+map<pair<ll, ll>, ll>cost;
+ll n, m, x, y, c, q;
+void init() {
+	m = ll(ceil(log2(n)));
+	anc = vector<vector<ll>>(n + 1, vector<ll>(m + 1));
+	mx = vector<vector<ll>>(n + 1, vector<ll>(m + 1));
+	mn = vector<vector<ll>>(n + 1, vector<ll>(m + 1, INF));
+	graph = vector<vector<ll>>(n + 1);
+	dpth = vector<ll>(n + 1);
 }
-
-bool is_ancestor(int u, int v)
-{
-    return tin[u] <= tin[v] && tout[u] >= tout[v];
+void dfs(ll i, ll p) {
+	for (ll& child : graph[i]) {
+		if (child == p)
+			continue;
+		dpth[child] = dpth[i] + 1;
+		anc[child][0] = i;
+		mn[child][0] = mx[child][0] = cost[{child, i}];
+		for (ll j = 1; j < m; j++) {
+			anc[child][j] = anc[anc[child][j - 1]][j - 1];
+			mx[child][j] = max(mx[child][j - 1], mx[anc[child][j - 1]][j - 1]);
+			mn[child][j] = min(mn[child][j - 1], mn[anc[child][j - 1]][j - 1]);
+		}
+		dfs(child, i);
+	}
 }
-
-int lca(int u, int v)
-{
-    if (is_ancestor(u, v))
-        return u;
-    if (is_ancestor(v, u))
-        return v;
-    for (int i = L - 1; i >= 0; --i) {
-        if (!is_ancestor(up[u][i], v))
-            u = up[u][i];
-    }
-    return up[u][0];
+pair<ll,pair<ll,ll>> k_anc(ll u, ll k) {
+	ll mxval = 0, mnVal = INF;
+	for (ll i = 0; i < m; i++) {
+		if (k & (1LL << i)) {
+			mxval = max(mxval, mx[u][i]);
+			mnVal = min(mnVal, mn[u][i]);
+			u = anc[u][i];
+		}
+	}
+	return { u,{mxval,mnVal} };
 }
-
-int main()
-{
-
-	dfs(root, root);
+pair<ll,pair<ll,ll>> lca(ll u, ll v) {
+	if (dpth[u] < dpth[v])
+		swap(u, v);
+	ll k = dpth[u] - dpth[v];
+	auto kth = k_anc(u, k);
+	u = kth.first;
+	ll mxVAl = 0;
+	ll mnVal = INF;
+	if (u == v)
+		return kth;
+	for (ll i = m - 1; i >= 0; i--) {
+		if (anc[v][i] != anc[u][i]) {
+			mxVAl = max(mxVAl, mx[u][i]);
+			mxVAl = max(mxVAl, mx[v][i]);
+			mnVal = min(mnVal, mn[u][i]);
+			mnVal = min(mnVal, mn[v][i]);
+			u = anc[u][i];
+			v = anc[v][i];
+		}
+	}
+	mxVAl = max(mxVAl, mx[u][0]);
+	mxVAl = max(mxVAl, mx[v][0]);
+	mnVal = min(mnVal, mn[u][0]);
+	mnVal = min(mnVal, mn[v][0]);
+	mxVAl = max(mxVAl, kth.second.first);
+	mnVal = min(mnVal, kth.second.second);
+	return { anc[u][0] ,{mxVAl,mnVal} };
+}
+void start(ll rt = 1) {
+	anc[rt][0] = rt;
+	dpth[rt] = 0;
+	dfs(rt, -1);
+}
+void solve() {
+	cin >> n;
+	init();
+	for (ll i = 1; i < n; i++) {
+		cin >> x >> y >> c;
+		graph[x].push_back(y);
+		graph[y].push_back(x);
+		cost[{x, y}] = cost[{y, x}] = c;
+	}
+	start();
+	cin >> q;
+	while (q--)
+	{
+		cin >> x >> y;
+		auto ans = lca(x, y);
+		cout << ans.second.second << " " << ans.second.first << endl;
+	}
 }
 ```
 # Centroid Decomposition
