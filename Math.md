@@ -63,7 +63,7 @@ use the information in `shift_solution()` from all possible solutions.
 - If a > b , we need to select the largest possible value of  cnt .
 - If  a = b , all solution will have the same sum x + y.
 
-<h3> OR: just get min sum when shift_solution is called every time</h3>
+<h5> OR: just get min sum when shift_solution is called every time</h5>
 
 ```c++
 int mnsum = 1e9 + 7, xmnsm = 0, ymnsm = 0;
