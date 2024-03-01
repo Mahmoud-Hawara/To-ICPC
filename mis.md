@@ -134,3 +134,175 @@ int findXOR(int l, int r)
 }
 
 ```
+# FFT
+All possible sums¶
+We are given two arrays  
+$a[]$  and  
+$b[]$ . We have to find all possible sums  
+$a[i] + b[j]$ , and for each sum count how often it appears.
+
+For example for  
+$a = [1,~ 2,~ 3]$  and  
+$b = [2,~ 4]$  we get: then sum  
+$3$  can be obtained in  
+$1$  way, the sum  
+$4$  also in  
+$1$  way,  
+$5$  in  
+$2$ ,  
+$6$  in  
+$1$ ,  
+$7$  in  
+$1$ .
+
+We construct for the arrays  
+$a$  and  
+$b$  two polynomials  
+$A$  and  
+$B$ . The numbers of the array will act as the exponents in the polynomial ( 
+$a[i] \Rightarrow x^{a[i]}$ ); and the coefficients of this term will be how often the number appears in the array.
+
+Then, by multiplying these two polynomials in  
+$O(n \log n)$  time, we get a polynomial  
+$C$ , where the exponents will tell us which sums can be obtained, and the coefficients tell us how often. To demonstrate this on the example:
+
+ 
+$$(1 x^1 + 1 x^2 + 1 x^3) (1 x^2 + 1 x^4) = 1 x^3 + 1 x^4 + 2 x^5 + 1 x^6 + 1 x^7$$ 
+All possible scalar products¶
+We are given two arrays  
+$a[]$  and  
+$b[]$  of length  
+$n$ . We have to compute the products of  
+$a$  with every cyclic shift of  
+$b$ .
+
+We generate two new arrays of size  
+$2n$ : We reverse  
+$a$  and append  
+$n$  zeros to it. And we just append  
+$b$  to itself. When we multiply these two arrays as polynomials, and look at the coefficients  
+$c[n-1],~ c[n],~ \dots,~ c[2n-2]$  of the product  
+$c$ , we get:
+
+  
+ 
+ 
+$$c[k] = \sum_{i+j=k} a[i] b[j]$$ 
+And since all the elements  
+$a[i] = 0$  for  
+$i \ge n$ :
+
+ 
+ 
+ 
+$$c[k] = \sum_{i=0}^{n-1} a[i] b[k-i]$$ 
+It is easy to see that this sum is just the scalar product of the vector  
+$a$  with the  
+$(k - (n - 1))$ -th cyclic left shift of  
+$b$ . Thus these coefficients are the answer to the problem, and we were still able to obtain it in  
+$O(n \log n)$  time. Note here that  
+$c[2n-1]$  also gives us the  
+$n$ -th cyclic shift but that is the same as the  
+$0$ -th cyclic shift so we don't need to consider that separately into our answer.
+
+Two stripes¶
+We are given two Boolean stripes (cyclic arrays of values  
+$0$  and  
+$1$ )  
+$a$  and  
+$b$ . We want to find all ways to attach the first stripe to the second one, such that at no position we have a  
+$1$  of the first stripe next to a  
+$1$  of the second stripe.
+
+The problem doesn't actually differ much from the previous problem. Attaching two stripes just means that we perform a cyclic shift on the second array, and we can attach the two stripes, if scalar product of the two arrays is  
+$0$ .
+
+String matching¶
+We are given two strings, a text  
+$T$  and a pattern  
+$P$ , consisting of lowercase letters. We have to compute all the occurrences of the pattern in the text.
+
+We create a polynomial for each string ( 
+$T[i]$  and  
+$P[I]$  are numbers between  
+$0$  and  
+$25$  corresponding to the  
+$26$  letters of the alphabet):
+
+ 
+$$A(x) = a_0 x^0 + a_1 x^1 + \dots + a_{n-1} x^{n-1}, \quad n = |T|$$ 
+with
+
+ 
+ 
+ 
+$$a_i = \cos(\alpha_i) + i \sin(\alpha_i), \quad \alpha_i = \frac{2 \pi T[i]}{26}.$$ 
+And
+
+ 
+$$B(x) = b_0 x^0 + b_1 x^1 + \dots + b_{m-1} x^{m-1}, \quad m = |P|$$ 
+with
+
+ 
+ 
+ 
+$$b_i = \cos(\beta_i) - i \sin(\beta_i), \quad \beta_i = \frac{2 \pi P[m-i-1]}{26}.$$ 
+Notice that with the expression  
+$P[m-i-1]$  explicitly reverses the pattern.
+
+The  
+$(m-1+i)$ th coefficients of the product of the two polynomials  
+$C(x) = A(x) \cdot B(x)$  will tell us, if the pattern appears in the text at position  
+$i$ .
+
+ 
+ 
+ 
+ 
+ 
+$$c_{m-1+i} = \sum_{j = 0}^{m-1} a_{i+j} \cdot b_{m-1-j} = \sum_{j=0}^{m-1} \left(\cos(\alpha_{i+j}) + i \sin(\alpha_{i+j})\right) \cdot \left(\cos(\beta_j) - i \sin(\beta_j)\right)$$ 
+with  
+ 
+ 
+$\alpha_{i+j} = \frac{2 \pi T[i+j]}{26}$  and  
+ 
+ 
+$\beta_j = \frac{2 \pi P[j]}{26}$ 
+
+If there is a match, than  
+$T[i+j] = P[j]$ , and therefore  
+$\alpha_{i+j} = \beta_j$ . This gives (using the Pythagorean trigonometric identity):
+
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+$$\begin{align} c_{m-1+i} &= \sum_{j = 0}^{m-1} \left(\cos(\alpha_{i+j}) + i \sin(\alpha_{i+j})\right) \cdot \left(\cos(\alpha_{i+j}) - i \sin(\alpha_{i+j})\right) \\ &= \sum_{j = 0}^{m-1} \cos(\alpha_{i+j})^2 + \sin(\alpha_{i+j})^2 = \sum_{j = 0}^{m-1} 1 = m \end{align}$$ 
+If there isn't a match, then at least a character is different, which leads that one of the products  
+$a_{i+1} \cdot b_{m-1-j}$  is not equal to  
+$1$ , which leads to the coefficient  
+$c_{m-1+i} \ne m$ .
+
+String matching with wildcards¶
+This is an extension of the previous problem. This time we allow that the pattern contains the wildcard character  
+$\*$ , which can match every possible letter. E.g. the pattern  
+$a*c$  appears in the text  
+$abccaacc$  at exactly three positions, at index  
+$0$ , index  
+$4$  and index  
+$5$ .
+
+We create the exact same polynomials, except that we set  
+$b_i = 0$  if  
+$P[m-i-1] = *$ . If  
+$x$  is the number of wildcards in  
+$P$ , then we will have a match of  
+$P$  in  
+$T$  at index  
+$i$  if  
+$c_{m-1+i} = m - x$ .
