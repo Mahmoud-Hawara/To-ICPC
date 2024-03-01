@@ -848,12 +848,33 @@ vector<int> multiply(vector<int> const& a, vector<int> const& b) {
         result[i] = round(fa[i].real());
     return result;
 }
+
+void fn()
+{
+  cin >> n;
+  vector<ll> a(n + 1), b(n + 1);
+  for (ll i = 0; i < n + 1; i++)
+  {
+    cin >> a[i];
+  }
+  for (ll i = 0; i < n + 1; i++)
+  {
+    cin >> b[i];
+  }
+  // reverse(a.begin(), a.end());
+  // reverse(b.begin(), b.end());
+  vector<ll> ans = multiply(a, b);
+  for (ll i = 0; i < 2 * n + 1; i++)
+    cout << ans[i] << " ";
+  cout << '\n';
+}
  int carry = 0;
     for (int i = 0; i < n; i++)
         result[i] += carry;
         carry = result[i] / 10;
         result[i] %= 10;
     }
+
 
 ```
 # pentagonal number
