@@ -648,6 +648,26 @@ struct comb {
 	}
 };
 ```
+### dearrangement
+
+- Derrangement: permutation has no fixed point 
+-	`[4 1 2 3]`: derragment
+-	`[1 3 4 2]`: $NOT$  a derrangement (1 maps to 1)
+-	$!n$ : number of derrangements for permutation of size n
+-	note: $n!$ ==> factorial(n)  , $!n$ ==>derrangment(n)
+-	$!n = [n/e]$ , $e = 2.71828...$ nearest integer to fraction
+-	$!n = |_ n/e + 1/2 \_|$     ==> floor function
+-	probabilty of no fixed points = $!n / n!  = n/e/n = 1/e = 0.37$
+-	when $n>=4$ probability of derrangement  = 37% 
+	or 63% to get a match (there are fixed points in permutaion)
+-	`n:  0 1 2 3 4 5    6    7`
+-	`!n: 1 0 1 2 9 44  265  1854`
+-	dp recurrance: 
+		$!n = (n-1) * [!(n-1)+!(n-2)] for\ n>=2$
+		$!1 = 0, !0 = 1$
+-	other recurrance:
+	$!n =  n==0? 1 : n * !(n-1) + (-1)^ n$
+
 # matrix exp
 ```cpp
 #include <bits/stdc++.h>
@@ -979,29 +999,9 @@ ll phi(ll n)
 
 ```
 
-### dearrangement
 
-- Derrangement: permutation has no fixed point 
--	`[4 1 2 3]`: derragment
--	`[1 3 4 2]`: $NOT$  a derrangement (1 maps to 1)
--	$!n$ : number of derrangements for permutation of size n
--	note: $n!$ ==> factorial(n)  , $!n$ ==>derrangment(n)
--	$!n = [n/e]$ , $e = 2.71828...$ nearest integer to fraction
--	$!n = |_ n/e + 1/2 \_|$     ==> floor function
--	probabilty of no fixed points = $!n / n!  = n/e/n = 1/e = 0.37$
--	when $n>=4$ probability of derrangement  = 37% 
-	or 63% to get a match (there are fixed points in permutaion)
--	`n:  0 1 2 3 4 5    6    7`
--	`!n: 1 0 1 2 9 44  265  1854`
--	dp recurrance: 
-		$!n = (n-1) * [!(n-1)+!(n-2)] for\ n>=2$
-		$!1 = 0, !0 = 1$
--	other recurrance:
-	$!n =  n==0? 1 : n * !(n-1) + (-1)^ n$
-<<<<<<< HEAD
 ### strirling
-//n! ≈sqrt(2*pi*n)*(n^n)*(e^(-n)) stirling approximation.
-=======
+- n! ≈sqrt(2*pi*n)*(n^n)*(e^(-n)) stirling approximation.
 
 
 # Factorial factorization
@@ -1017,4 +1017,19 @@ int FactN_primePower(int n,int p){//O(log n base p)   ||| n should be the factor
 	}
 }
 ```
->>>>>>> 29534c6824a1a21b4a9edc8c2b47efdb867dba81
+## gray code 
+- every two successive numbers have a difference of one bit 
+```c++
+ll grayCode(ll i){
+	return (i ^ (i>>1));
+}
+//
+void printGrayCode(ll len){
+	for(int i=0;i< (1<<len)-1;i++){
+		bitset<4>a(i);
+		cout<< a <<"\t\t";
+		a = grayCode(i);
+		cout<< a<<"\t\t";
+		cout<<__builtin_popcount(grayCode(i))<<endl; 
+	}
+}```
