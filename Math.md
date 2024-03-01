@@ -668,3 +668,18 @@ struct comb {
 		$!1 = 0, !0 = 1$
 -	other recurrance:
 	$!n =  n==0? 1 : n * !(n-1) + (-1)^ n$
+
+
+# Factorial factorization
+
+- get number of copies of a prime in a factiorial
+- Given n and p what is the max x such n%(p^x)==0
+
+```c++
+int FactN_primePower(int n,int p){//O(log n base p)   ||| n should be the factorial value
+	int pow=0;
+	for(int i=p;i<=n;i*=p){
+		pow+=n/i;
+	}
+}
+```
