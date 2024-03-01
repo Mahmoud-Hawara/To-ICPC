@@ -506,3 +506,30 @@ ll determinant(vector<vector<ll> > mat, ll P) {
 	return (ret % P+P)%P;
 }
 ```
+# Catlan Number
+- 1, 1, 2, 5, 14, 42, 132, 429, ....
+- O(n^2).
+- The Catalan number $C_n$  is the solution for: 
+- Number of correct bracket sequence consisting of $n$  opening and $n$  closing brackets.
+- The number of rooted full binary trees with  $n + 1$  leaves (vertices are not numbered). A rooted binary tree is full if every vertex has either two children or no children.
+- The number of ways to completely parenthesize $n + 1$  factors.
+- The number of triangulations of a convex polygon with $n + 2$  sides (i.e. the number of partitions of polygon into disjoint triangles by using the diagonals).
+- The number of ways to connect the $2n$  points on a circle to form  $n$ disjoint chords.
+- $$C_n = \frac{1}{n + 1} {\binom{2n}{n}}$$ 
+``` cpp
+const int MOD = ....
+const int MAX = ....
+int catalan[MAX];
+void init() {
+    catalan[0] = catalan[1] = 1;
+    for (int i=2; i<=n; i++) {
+        catalan[i] = 0;
+        for (int j=0; j < i; j++) {
+            catalan[i] += (catalan[j] * catalan[i-j-1]) % MOD;
+            if (catalan[i] >= MOD) {
+                catalan[i] -= MOD;
+            }
+        }
+    }
+}
+```
