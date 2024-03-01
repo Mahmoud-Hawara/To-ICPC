@@ -152,6 +152,78 @@ void floyd()
 }
 
 ```
+# DSU
+```cpp
+void make_set(int v) {
+    parent[v] = make_pair(v, 0);
+    rank[v] = 0;
+}
+
+pair<int, int> find_set(int v) {
+    if (v != parent[v].first) {
+        int len = parent[v].second;
+        parent[v] = find_set(parent[v].first);
+        parent[v].second += len;
+    }
+    return parent[v];
+}
+
+void union_sets(int a, int b) {
+    a = find_set(a).first;
+    b = find_set(b).first;
+    if (a != b) {
+        if (rank[a] < rank[b])
+            swap(a, b);
+        parent[b] = make_pair(a, 1);
+        if (rank[a] == rank[b])
+            rank[a]++;
+    }
+}
+```
+## isbipartite using dsu
+```cpp
+void make_set(int v) {
+    parent[v] = make_pair(v, 0);
+    rank[v] = 0;
+    bipartite[v] = true;
+}
+
+pair<int, int> find_set(int v) {
+    if (v != parent[v].first) {
+        int parity = parent[v].second;
+        parent[v] = find_set(parent[v].first);
+        parent[v].second ^= parity;
+    }
+    return parent[v];
+}
+
+void add_edge(int a, int b) {
+    pair<int, int> pa = find_set(a);
+    a = pa.first;
+    int x = pa.second;
+
+    pair<int, int> pb = find_set(b);
+    b = pb.first;
+    int y = pb.second;
+
+    if (a == b) {
+        if (x == y)
+            bipartite[a] = false;
+    } else {
+        if (rank[a] < rank[b])
+            swap (a, b);
+        parent[b] = make_pair(a, x^y^1);
+        bipartite[a] &= bipartite[b];
+        if (rank[a] == rank[b])
+            ++rank[a];
+    }
+}
+
+bool is_bipartite(int v) {
+    return bipartite[find_set(v).first];
+}
+```
+
 # MST
 form minimum spanning tree in $O(n log(n))$
 ```cpp
@@ -526,6 +598,10 @@ void find_bridges()
 }
 ```
 # bridges online 
+The algorithm described below works in  
+$O(n \log n + m)$  time, where  
+$m$  is the number of edges. The algorithm is based on the data structure Disjoint Set Union. However the implementation in this article takes  
+$O(n \log n + m \log n)$  time, because it uses the simplified version of the DSU without Union by Rank.
 ```cpp
 vector<int> par, dsu_2ecc, dsu_cc, dsu_cc_size;
 int bridges;
@@ -679,6 +755,7 @@ void find_cutpoints() {
 }
 ```
 # hungarian
+$O(n^3)$
 ```cpp
 double arr[105][105];
 vector<int> hungarian()
@@ -806,6 +883,10 @@ for (int v = 0; v < n; v++)
     }
 ```
 # 2-sat
+SAT is NP-complete, there is no known efficient solution for it. However 2SAT can be solved efficiently in  
+$O(n + m)$  where  
+$n$  is the number of variables and  
+$m$  is the number of clauses.
 ```cpp
 vector<int> adj[N], adj_t[N];
 vector<bool> used;
