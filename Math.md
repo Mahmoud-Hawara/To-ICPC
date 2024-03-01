@@ -515,7 +515,7 @@ ll determinant(vector<vector<ll> > mat, ll P) {
 - The number of ways to completely parenthesize $n + 1$  factors.
 - The number of triangulations of a convex polygon with $n + 2$  sides (i.e. the number of partitions of polygon into disjoint triangles by using the diagonals).
 - The number of ways to connect the $2n$  points on a circle to form  $n$ disjoint chords.
-- $$C_n = \frac{1}{n + 1} {\binom{2n}{n}}$$ 
+- $$C_n = \binom{2n}{n} - \binom{2n}{n-1} = \frac{1}{n + 1} \binom{2n}{n} , {n} \geq 0$$ 
 ``` cpp
 const int MOD = ....
 const int MAX = ....
