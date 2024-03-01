@@ -94,6 +94,44 @@ void solve() {
 	}
 }
 ```
+#dijkestra
+```
+time: O(E*log(V))
+```
+```cpp
+vector<pair<ll, ll>>graph[N];
+ll dist[N];
+ll parent[N];
+void dijkstra(ll start)
+{
+
+    for (int i = 0; i <= n ; i++)
+        dist[i] = MAX,parent[i]=0;
+
+    dist[start] = 0;
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>>pq;
+    pq.push({0,start});
+    while(!pq.empty())
+    {
+        auto top=pq.top();
+        pq.pop();
+        ll len=top.first,v=top.second;
+        if(len>dist[v])continue;
+        for(auto x:graph[v])
+        {
+            ll to=x.first,l_to=x.second;
+
+            if(dist[to]>len+l_to)
+            {
+                dist[to]=len+l_to;
+                parent[to]=v;
+                 pq.push({dist[to],to});
+            }
+        }
+    }
+}
+
+```
 # Centroid Decomposition
 
 ### 1st method
