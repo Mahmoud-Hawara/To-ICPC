@@ -585,6 +585,14 @@ struct combination {
 - $(nC0)^2 + (nC1)^2 + ... + (nCn)^2 = (2nCn)$
 - $nC0 + (n-1)C1 + (n-2)C2 + ... 0Cn = Fibonacci(n+1)$
 - The number of ways to place $k$ identical items into $n$ different places when any place can contain any amount of items is the definition of the number of k-combinations with repetitions: $$ans = C[n+k-1][k]$$
+```cpp
+int C(int n, int k) {
+    double res = 1;
+    for (int i = 1; i <= k; ++i)
+        res = res * (n - k + i) / i;
+    return (int)(res + 0.01);
+}
+```
 - In pascal triangle, the number of odd elements in row i = 2 ^ (#1's in the binary representation of i)
 ``` c++
 
