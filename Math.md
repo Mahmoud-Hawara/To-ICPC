@@ -567,9 +567,9 @@ struct combination {
 - $nCk = (n/k)*[(n-1)C(k-1)]$
 - ${sum k = [0..n] (nCk) }= 2^n$
 - $nC1 + nC2 + .... + nCn$ = $2^n$
-- $sum$ $m$ = $[0...n](mCk)$ = $(n+1)C(k+1)$
+- `{sum k=[0=>m]((n+k)Ck)} = (n+m+1)Cm`
+- `{sum m= [0=>n](mCk)} = (n+1)C(k+1)`
 - $0Ck + 1Ck + .... + nCk = (n+1)C(k+1)$
-- $sum$ $k$ = $[0...m]((n+k)Ck)$ = $(n+m+1)Cm$
 - $nC0 + (n+1)C1 + (n+2)C2 + (n+3)C3= (n+4)C3$
 - $(nC1) + 2 (nC2)+ ... + n(nCn) = n*2^n / 2 $
 - $(nC0)^2 + (nC1)^2 + ... + (nCn)^2 = (2nCn)$
