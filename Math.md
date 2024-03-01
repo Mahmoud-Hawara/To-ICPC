@@ -237,7 +237,7 @@ ll square_free_index(ll val, int n)
 # Gaussian Elimination
 - Given a system of $n$ linear algebraic equations with $m$ unknowns. You are asked to solve the system: to determine if it has no solution, exactly one solution or infinite number of solutions. And in case it has at least one solution, find any of them.
 - Search and reshuffle the pivoting row. This takes $O(n + m)$  when using heuristic mentioned above.
-- If the pivot element in the current column is found - then we must add this equation to all other equations, which takes time $O(nm)$ .
+- If the pivot element in the current column is found - then we must add this equation to all other equations, which takes time $O(nm)$ so it will be $O(n^3)$.
 ```cpp
 pair<int, int> prepareFraction(int n, int d)
 {
