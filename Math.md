@@ -568,8 +568,8 @@ struct combination {
 
 # Stars & Bars
 - The number of ways to put $n$  identical objects into $k$  labeled boxes is: $$\binom{n + k - 1}{n}.$$
-- Number of non-negative integer sums $$x_1 + x_2 + \dots + x_k = n$$  with  $x_i \ge 0$. The solution is $\binom{n + k - 1}{n}$.
-- Number of positive integer sums $$x_1 + x_2 + \dots + x_k = n$$  with  $x_i \g 0$. The solution is $\binom{n - 1}{k - 1}$.
+- Number of non-negative integer sums $$x_1 + x_2 + \dots + x_k = n$$  with  $$x_i \ge 0$$. The solution is $\binom{n + k - 1}{n}$.
+- Number of positive integer sums $$x_1 + x_2 + \dots + x_k = n$$  with  $$x_i \g 0$$. The solution is $\binom{n - 1}{k - 1}$.
 
 - calculate until $1e6$ in $O(log(n))$
 - can calculate in $O(1)$ if Mod is smaller than 1e6
@@ -665,6 +665,21 @@ struct comb {
 			fib[i] = add(fib[i - 1] , fib[i - 2]);
 	}
 };
+```
+
+# Finding Power of Factorial Divisor¶
+You are given two numbers $n$  and $k$. Find the largest power of $k$ such that $n!$ is divisible by $k^x$ .
+- worked only when k is prime.
+- O(log(k) p)
+```cpp
+int fact_pow (int n, int k) {
+    int res = 0;
+    while (n) {
+        n /= k;
+        res += n;
+    }
+    return res;
+}
 ```
 ### dearrangement
 
