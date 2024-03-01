@@ -533,3 +533,138 @@ void init() {
     }
 }
 ```
+
+# Combinatorics 
+
+- calculate until $1000*1000$ in $O(1)$
+- pascal triangle generation.
+
+``` c++
+struct combination {
+	vector<vector<ll>>C;
+	int n;
+	combination(int n = 1001, ll Mod = Mod) {
+		this->n = n;
+		C = vector<vector<ll>>(n, vector<ll>(n));
+		init();
+	}
+	void init() {
+		C[0][0] = 1;
+		for (int i = 1; i < n; i++) {
+			C[i][0] = C[i][i] = 1;
+			for (int j = 1; j < i; j++)
+				C[i][j] = (C[i - 1][j] % Mod + C[i - 1][j - 1] % Mod) % Mod;
+		}
+	}
+	ll nCr(ll n, ll r) {
+		return C[n][r];
+	}
+};
+```
+- calculate until $1e6$ in $O(log(n))$
+- can calculate in $O(1)$ if Mod is smaller than 1e6
+- $nCk = nC(n-k)$
+- $nCk = (n/k)*[(n-1)C(k-1)]$
+- ${sum k = [0=> n] (nCk) }= 2^n$
+- $nC1 + nC2 + .... + nCn = 2^n = 1<<n$
+- ${sum m= [0=>n](mCk)} = (n+1)C(k+1)$
+- $0Ck + 1Ck + .... + nCk = (n+1)C(k+1)$
+- ${sum k=[0=>m]((n+k)Ck)} = (n+m+1)Cm$
+- $nC0 + (n+1)C1 + (n+2)C2 + (n+3)C3= (n+4)C3$
+- $(nC1) + 2 (nC2)+ ... + n(nCn) = n*2^n / 2 $
+- $(nC0)^2 + (nC1)^2 + ... + (nCn)^2 = (2nCn)$
+- $nC0 + (n-1)C1 + (n-2)C2 + ... 0Cn = Fibonacci(n+1)$
+- The number of ways to place $k$ identical items into $n$ different places when any place can contain any amount of items is the definition of the number of k-combinations with repetitions: $$ans = C[n+k-1][k]$$
+- In pascal triangle, the number of odd elements in row i = 2 ^ (#1's in the binary representation of i)
+``` c++
+
+struct comb {
+	vector<ll>fc, invfc, fib, dr;
+	int n;
+	ll MOD;
+	comb(int n = 1e6, ll Mod = Mod) {
+		this->n = n;
+		MOD = Mod;
+		fc.assign(n, 0);
+		fib.assign(n, 0);
+		dr.assign(n, 0);
+		invfc.assign(n, 0);
+		factClc();
+		//inverseClc(); //can only be used if MOD < 1e6
+	}
+	void factClc() {
+		fc[0] = 1;
+		for (int i = 1; i < n; i++)
+			fc[i] = (fc[i - 1LL] % MOD * i % MOD) % MOD;
+	}
+	void inverseClc() {
+		invfc[1] = 1;
+		for (int i = 2; i < MOD; i++)
+			invfc[i] = MOD - (MOD / i) * invfc[MOD % i] % MOD;
+	}
+	ll nCr(ll n, ll r) {
+		return (fc[n] * inv(fc[r] * fc[n - r] % MOD) + MOD) % MOD;
+	}
+	ll nCrFast(ll n, ll r) {
+
+		return (fc[n] * invfc[fc[r]] % MOD * invfc[fc[n - r]] % MOD + MOD) % MOD;
+	}
+	//only for small range ==> can overflow
+	ll getC(ll n, int r)
+	{
+		if (r > n) return 0;
+		ll res = 1;
+		for (int i = 0; i < r; i++)
+		{
+			res *= n - i;
+			res /= i + 1;
+		}
+		return res;
+	}
+	ll modpow(ll base, ll pow) {
+		if (pow == 0)return 1 % MOD;
+		ll u = modpow(base, pow / 2);
+		u = (u * u) % MOD;
+		if (pow % 2 == 1)u = (u * base) % MOD;
+		return u;
+	}
+	ll add(ll a, ll b) {
+		return ((a % MOD + b % MOD) % MOD + MOD) % MOD;
+	}
+	ll mul(ll a, ll b) {
+		return ((a % MOD * b % MOD) % MOD + MOD) % MOD;
+	}
+	void derrangement() {
+		dr[0] = 1;
+		dr[1] = 0;
+		for (int i = 2; i < n; i++)
+			dr[i] = mul((i - 1LL), add(dr[i - 1], dr[i - 2]));
+	}
+	void fibonacci() {
+		fib[0] = 1;
+		fib[1] = 2;
+		for (int i = 2; i < n; i++)
+			fib[i] = add(fib[i - 1] , fib[i - 2]);
+	}
+};
+```
+
+### dearrangement
+
+- Derrangement: permutation has no fixed point 
+-	`[4 1 2 3]`: derragment
+-	`[1 3 4 2]`: $NOT$  a derrangement (1 maps to 1)
+-	$!n$ : number of derrangements for permutation of size n
+-	note: $n!$ ==> factorial(n)  , $!n$ ==>derrangment(n)
+-	$!n = [n/e]$ , $e = 2.71828...$ nearest integer to fraction
+-	$!n = |_ n/e + 1/2 \_|$     ==> floor function
+-	probabilty of no fixed points = $!n / n!  = n/e/n = 1/e = 0.37$
+-	when $n>=4$ probability of derrangement  = 37% 
+	or 63% to get a match (there are fixed points in permutaion)
+-	`n:  0 1 2 3 4 5    6    7`
+-	`!n: 1 0 1 2 9 44  265  1854`
+-	dp recurrance: 
+		$!n = (n-1) * [!(n-1)+!(n-2)] for\ n>=2$
+		$!1 = 0, !0 = 1$
+-	other recurrance:
+	$!n =  n==0? 1 : n * !(n-1) + (-1)^ n$
