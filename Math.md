@@ -648,6 +648,336 @@ struct comb {
 	}
 };
 ```
+# matrix exp
+```cpp
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define ll long long
+#define IO ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+ int MOD=1e9+7;
+#define REP(i,n) for(int i = 0; i < (n); i++)
+struct Matrix {
+	ll a[2][2] = {{0,0},{0,0}};
+	Matrix operator *(const Matrix& other) {
+		Matrix product;
+		REP(i,2)REP(j,2)REP(k,2) {
+			product.a[i][k] += a[i][j] * other.a[j][k]%MOD;
+			product.a[i][k]%=MOD;
+		}
+		return product;
+	}
+};
+Matrix expo_power(Matrix a, ll k) {
+	Matrix product;
+	REP(i,2) product.a[i][i] = 1;
+	while(k > 0) {
+		if(k % 2) {
+			product = product * a;
+		}
+		a = a * a;
+		k /= 2;
+	}
+	return product;
+}
+void solve()
+{
+    LDBL_MAX n, m;
+    cin >> n;
+    Matrix ree;
+    ree.a[0][0]=19;
+    ree.a[0][1]=7;
+    ree.a[1][0]=6;
+    ree.a[1][1]=20;
+    Matrix z= expo_power(ree,n);
+    // printMat(z);
+    cout<<z.a[0][0]<<'\n';
+    return;
+}
+```
+# FFT
+```cpp
+using cd = complex<double>;
+const double PI = acos(-1);
+
+void fft(vector<cd> & a, bool invert) {
+    int n = a.size();
+
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 2; len <= n; len <<= 1) {
+        double ang = 2 * PI / len * (invert ? -1 : 1);
+        cd wlen(cos(ang), sin(ang));
+        for (int i = 0; i < n; i += len) {
+            cd w(1);
+            for (int j = 0; j < len / 2; j++) {
+                cd u = a[i+j], v = a[i+j+len/2] * w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+
+    if (invert) {
+        for (cd & x : a)
+            x /= n;
+    }
+}
+
+
+const int mod = 7340033;
+const int root = 5;
+const int root_1 = 4404020;
+const int root_pw = 1 << 20;
+
+void fft(vector<int> & a, bool invert) {
+    int n = a.size();
+
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 2; len <= n; len <<= 1) {
+        int wlen = invert ? root_1 : root;
+        for (int i = len; i < root_pw; i <<= 1)
+            wlen = (int)(1LL * wlen * wlen % mod);
+
+        for (int i = 0; i < n; i += len) {
+            int w = 1;
+            for (int j = 0; j < len / 2; j++) {
+                int u = a[i+j], v = (int)(1LL * a[i+j+len/2] * w % mod);
+                a[i+j] = u + v < mod ? u + v : u + v - mod;
+                a[i+j+len/2] = u - v >= 0 ? u - v : u - v + mod;
+                w = (int)(1LL * w * wlen % mod);
+            }
+        }
+    }
+
+    if (invert) {
+        int n_1 = inverse(n, mod);
+        for (int & x : a)
+            x = (int)(1LL * x * n_1 % mod);
+    }
+}
+
+vector<int> multiply(vector<int> const& a, vector<int> const& b) {
+    vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+    int n = 1;
+    while (n < a.size() + b.size()) 
+        n <<= 1;
+    fa.resize(n);
+    fb.resize(n);
+
+    fft(fa, false);
+    fft(fb, false);
+    for (int i = 0; i < n; i++)
+        fa[i] *= fb[i];
+    fft(fa, true);
+
+    vector<int> result(n);
+    for (int i = 0; i < n; i++)
+        result[i] = round(fa[i].real());
+    return result;
+}
+ int carry = 0;
+    for (int i = 0; i < n; i++)
+        result[i] += carry;
+        carry = result[i] / 10;
+        result[i] %= 10;
+    }
+
+```
+# pentagonal number
+```cpp
+//pentagonal numbers and ways to partition
+
+ll penta[N];
+ll getNthPentagonalNumber(ll n)
+{
+  n = penta[n];
+  return (3ll * n * n - n) / 2;
+}
+ll dp[N]; // this dp is the number of ways to partition a number using pentagonal numbers
+ll solve(ll n)
+{
+  if (n < 0)
+    return 0;
+  if (n == 0)
+    return 1;
+  ll &ret = dp[n];
+  if (~ret)
+    return ret;
+  ret = 0;
+  for (int i = 1, z = 1;; i += 2, z++)
+  {
+    if (z % 2)
+    {
+      ret = (ret + solve(n - getNthPentagonalNumber(i))) % MOD;
+      ret = (ret + solve(n - getNthPentagonalNumber(i + 1))) % MOD;
+    }
+    else
+    {
+      ret = (ret - solve(n - getNthPentagonalNumber(i)) + MOD) % MOD;
+      ret = (ret - solve(n - getNthPentagonalNumber(i + 1)) + MOD) % MOD;
+    }
+    // cout << getNthPentagonalNumber(i) << " ss " << i << " " << n << " " << z << " " << ret << '\n';
+    if (n - getNthPentagonalNumber(i + 1) <= 0)
+      break;
+  }
+  return ret;
+}
+void init(){
+	penta[0] = 0;
+  int x = 0;
+  memset(dp, -1, sizeof dp);
+  for (int i = 0; i < N; i++)
+  {
+    penta[i] = x;
+    x = abs(x);
+    if (i == 0 || i % 2 == 0)
+      x++;
+    else
+      x *= -1;
+  }
+  solve(N - 2);
+}
+```
+# fib to the power k
+```cpp
+// sum of fib to the power k (every term)
+#include <bits/stdc++.h>
+using namespace std;
+template<class T, class S>
+ostream& operator << (ostream &o, const pair<T, S> &p) {
+    return o << '(' << p.first << ", " << p.second << ')';
+}
+template<template<class, class...> class T, class... A>
+typename enable_if<!is_same<T<A...>, string>(), ostream&>::type
+operator << (ostream &o, T<A...> V) {
+	o << '[';
+	for(auto a : V) o << a << ", ";
+	return o << ']';
+}
+ 
+typedef long long int ll;
+typedef long double ld;
+typedef pair<ll, ll> pl;
+typedef vector<ll> vl;
+ 
+#define G(x) ll x; cin >> x;
+#define GD(x) ld x; cin >> x;
+#define GS(s) string s; cin >> s;
+#define F(i, l, r) for(ll i = l; i < (r); ++i)
+#define FD(i, r, l) for(ll i = r; i > (l); --i)
+#define P(a, n) { cout << "{ "; F(_, 0, n) cout << a[_] << " "; cout << "}\n"; }
+#define EX(x) { cout << x << '\n'; exit(0); }
+#define A(a) (a).begin(), (a).end()
+#define U first
+#define R second
+#define M 1000000007 //998244353
+#define N 200010
+#define NCR(n, r) (f[n] * fi[r] % M * fi[(n) - (r)] % M)
+ 
+ll f[N], fi[N];
+ 
+pl operator*(pl a, pl b) {
+    return { (a.U * b.U + 5 * a.R * b.R) % M, (a.U * b.R + a.R * b.U) % M };
+}
+ 
+pl operator+(pl a, pl b) {
+    return { (a.U + b.U) % M, (a.R + b.R) % M };
+}
+ 
+pl pw(pl a, ll p) { return p ? pw(a * a, p / 2) * (p & 1 ? a : pl{1, 0}) : pl{1, 0}; }
+ 
+ll inv(ll a, ll b = M) { return 1 < a ? b - inv(b % a, a) * b / a : 1; } //inv a mod b
+ 
+pl inv(pl p) { return pl{p.U, (M - p.R) % M} * pl{inv((p.U * p.U + M - 5 * p.R * p.R % M) % M), 0}; }
+ 
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    f[0] = fi[0] = 1;
+    F(i, 1, N) f[i] = i * f[i - 1] % M, fi[i] = inv(f[i]);
+    G(n) G(k)
+    pl ans = {0, 0};
+    F(i, 0, k + 1) {
+        pl p = pw({1, 1}, i) * pw({1, M - 1}, k - i) * pw({inv(2), 0}, k);
+        pl q = (p == pl{1, 0} ? pl{(n + 1) % M, 0} : (pw(p, n + 1) + pl{M - 1, 0}) * inv(p + pl{M - 1, 0}));
+        ans = ans + q * pl{NCR(k, i) * ((k - i) % 2 ? M - 1 : 1) % M, 0};
+    }
+    cout << (ans * inv(pw({0, 1}, k))).U << '\n';
+}
+```
+
+# seive
+```cpp
+
+vector<int> primes, is_prime, spf, mobius, phi;
+
+void sieve(int n)
+{
+  primes.clear();
+  is_prime.assign(n + 1, 1);
+  spf.assign(n + 1, 0);
+  mobius.assign(n + 1, 0);
+  phi.assign(n + 1, 0);
+  is_prime[0] = is_prime[1] = 0;
+  mobius[1] = phi[1] = 1;
+  for (ll i = 2; i <= n; i++)
+  {
+    if (is_prime[i])
+    {
+      primes.push_back(i);
+      spf[i] = i;
+      mobius[i] = -1;
+      phi[i] = i - 1;
+    }
+    for (auto p : primes)
+    {
+      if (i * p > n || p > spf[i])
+        break;
+      is_prime[i * p] = 0;
+      spf[i * p] = p;
+      mobius[i * p] = (spf[i] == p) ? 0 : -mobius[i];
+      phi[i * p] = (spf[i] == p) ? phi[i] * p : phi[i] * phi[p];
+    }
+  }
+}
+ll phi(ll n)
+{
+  ll result = n;
+  for (ll i = 2; i * i <= n; i++)
+  {
+    if (n % i == 0)
+    {
+      while (n % i == 0)
+        n /= i;
+      result -= result / i;
+    }
+  }
+  if (n > 1)
+    result -= result / n;
+  return result;
+}
+
+```
 
 ### dearrangement
 
@@ -668,6 +998,10 @@ struct comb {
 		$!1 = 0, !0 = 1$
 -	other recurrance:
 	$!n =  n==0? 1 : n * !(n-1) + (-1)^ n$
+<<<<<<< HEAD
+### strirling
+//n! ≈sqrt(2*pi*n)*(n^n)*(e^(-n)) stirling approximation.
+=======
 
 
 # Factorial factorization
@@ -683,3 +1017,4 @@ int FactN_primePower(int n,int p){//O(log n base p)   ||| n should be the factor
 	}
 }
 ```
+>>>>>>> 29534c6824a1a21b4a9edc8c2b47efdb867dba81
