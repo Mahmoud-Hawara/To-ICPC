@@ -234,3 +234,276 @@ ll square_free_index(ll val, int n)
     return idx;
 }
 ```
+# Gaussian Elimination
+- Given a system of $n$ linear algebraic equations with $m$ unknowns. You are asked to solve the system: to determine if it has no solution, exactly one solution or infinite number of solutions. And in case it has at least one solution, find any of them.
+- Complexity:
+      - Search and reshuffle the pivoting row. This takes $O(n + m)$  when using heuristic mentioned above.
+      - If the pivot element in the current column is found - then we must add this equation to all other equations, which takes time $O(nm)$ .
+```cpp
+pair<int, int> prepareFraction(int n, int d)
+{
+	int div = gcd(n, d);
+	n /= div, d /= div;
+	if(d < 0)	n *= -1,  d*= -1;
+	return make_pair(n, d);
+}
+
+/*
+0X + 0Y = 0		,   0X +  0Y  = 4  		--> NO_SOLUTIONS
+0X + 0Y = 0		,   0X +  0Y  = 0 		--> INFINITE_SOLUTIONS
+2X + 3Y = 9		,  -2X + -3Y  = -9		--> INFINITE_SOLUTIONS
+1X + 3Y = 1		,   2X +  6Y  = -1		--> NO_SOLUTIONS
+1X + 2Y = 6		,   1X +  -4Y = -3		--> X=3/1, Y=3/2
+
+-9X + -9Y = -9	, -7X + -8Y = -8		--> X=0/1, Y=1/1
+-6X +  67 = -7	, -1X +  1Y = -6		--> NO_SOLUTIONS
+-7X +  2Y =  1	, -7X + -7Y =  6		--> X=(-19)/63 Y=(-5)/9
+ 9X + -2Y =  6	, -1X + -2Y = -1  	  	-->	X=7/10 Y=3/20
+ 1X +  1Y =  1	,  0X +  0Y =  0		--> INFINITE_SOLUTIONS
+*/
+pair<string, vector<int> > solve2Equations( int ax, int ay, int az,
+											int bx, int by, int bz)
+{
+	if( (!ax && !ay && az) || (!bx && !by && bz) )
+		return make_pair("NO_SOLUTIONS", vector<int>(4) );
+
+	if( (!ax && !ay && !az) || (!bx && !by && !bz) )
+		return make_pair("INFINITE_SOLUTIONS", vector<int>(4) );
+
+    if( ax*by == ay*bx && ax*bz==az*bx && ay*bz==by*az )
+      	return make_pair("INFINITE_SOLUTIONS", vector<int>(4) );
+
+    if( ax*by == ay*bx )
+      	return make_pair("NO_SOLUTIONS", vector<int>(4) );
+
+    pair<int, int> X = prepareFraction(by*az-ay*bz, by*ax-bx*ay);
+    pair<int, int> Y = prepareFraction(bx*az-ax*bz, bx*ay-by*ax);
+
+    int sol[] = {X.first, X.second, Y.first, Y.second };
+    return make_pair("SOLVED", vector<int>(sol, sol+4) );
+}
+
+const double EPS = (1e-10);
+
+# define isZero(c) 	(fabs(c) < EPS)
+enum GaussStatus {	NO_SOLUTION = -10, UNIQUE = 1, INFINITE_SOLUTION = 10	};
+
+bool IsInvalidEqu(int c, vector<double> &row) {
+	// 0x+0y = 10 is invalid equ
+	for(;c < (int)row.size()-1;++c) if(!isZero(row[c]))
+		return false;
+
+	return isZero(row.back()) ? false : true;
+}
+
+
+/*
+// E.g. Solve: x + y = 3	x - y = 7
+vector<vector<double>> mat(2);
+mat[0] = {1,  1, 3};
+mat[1] = {1, -1, 7};
+
+int sol = solveLinerEqu(mat);	=> UNIQUE
+=> mat[0][2] = 5, mat[1][2] = -2
+*/
+GaussStatus GaussElim(vector<vector<double>> & mat){
+	int n = mat.size(), m = mat[0].size()-1;
+	GaussStatus status = UNIQUE;
+
+	for(int r = 0, c = 0; r < n && c < m; ++r, ++c){
+		int stable_r = r;	// partial pivoting
+		for(int j = r + 1; j < n; ++j)
+			if(fabs(mat[j][c]) > fabs(mat[stable_r][c]))
+				stable_r = j;
+
+		if(stable_r != r)
+			swap(mat[stable_r], mat[r]);
+		else if(isZero(mat[r][c])){
+			if(IsInvalidEqu(c, mat[r]))
+				return NO_SOLUTION;
+			--r, status = INFINITE_SOLUTION;	// c-th variable can be anything
+			continue;
+		}
+		for(int j = m; j >= c; --j) // convert diagonal to 1
+			mat[r][j] /= mat[r][c];
+
+		// zero all my column, except current row. Optimize for spare matrix
+		for(int k = 0; k < n; ++k) if(k != r && !isZero(mat[k][c])) {
+			for(int j = m; j >= c; --j)	// Add to kth-row: -mat[k][c] * mat[r] to zero it
+				mat[k][j] -= mat[k][c] * mat[r][j];
+		}
+	}	// watch out from solutions -0.0000000001
+	// To compute rank, see how many non zero equations
+	return status;
+}
+
+ll pow(ll a, ll k, ll M) {
+	if (k == 0)		return 1;
+	ll r = pow(a, k / 2, M);
+	r *= r, r %= M;
+	if (k % 2)	r = (r * a) % M;
+	return r;
+}
+
+bool IsInvalidEqu(int c, vector<ll> &row) {
+	// 0x+0y = 10 is invalid equ
+	for(;c < (int)row.size()-1;++c) if(row[c] != 0)
+		return false;
+
+	return row.back() == 0 ? false : true;
+}
+
+
+/*
+Solve system of linear equations % p
+x + y = 5  (% 5)
+3x + 6y = 1  (% 5)
+x = 3 and y = 2 solves this system
+Caution: NOT TESTED ON OJ
+
+vector<vector<int >> mat(2);
+mat[0] = {1, 1, 5};
+mat[1] = {3, 6, 1};
+
+GaussElimModPrime(mat, 5);
+*/
+GaussStatus GaussElimModPrime(vector<vector<ll>> & mat, int p){
+	int n = mat.size(), m = mat[0].size()-1;
+	GaussStatus status = UNIQUE;
+
+	// Fix any -ve mode or higher than p
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j <= m; ++j)
+			mat[i][j] = (mat[i][j] % p + p) % p;	// mod expensive
+	}
+
+	for(int r = 0, c = 0; r < n && c < m; ++r, ++c){
+		int stable_r = r;
+		for(int j = r; j < n; ++j)
+			if(mat[j][c] != 0) {
+				stable_r = j;
+				break;	// any value that can be mod inversed
+			}
+
+		if(stable_r != r)
+			swap(mat[stable_r], mat[r]);
+		else if(mat[r][c] == 0){
+			if(IsInvalidEqu(c, mat[r]))
+				return NO_SOLUTION;
+			--r, status = INFINITE_SOLUTION;	// c-th variable can be anything
+			// Actually NOT infinite. As independent variable can take p-1 values
+			continue;
+		}
+		int modInv = pow(mat[r][c], p-2, p);
+
+		for(int j = m; j >= c; --j) // convert diagonal to 1
+			mat[r][j] = (mat[r][j] * modInv)%p;
+
+		// zero all my column, except current row. Optimize for spare matrix
+		for(int k = 0; k < n; ++k) if(k != r && mat[k][c] != 0) {
+			for(int j = m; j >= c; --j)	// Add to kth-row: -mat[k][c] * mat[r] to zero it
+			{
+				mat[k][j] -= mat[k][c] * mat[r][j];
+				mat[k][j] = (mat[k][j] % p + p) %p;
+			}
+		}
+	}
+	return status;
+}
+
+const int N = 5;
+
+bool IsInvalidEqu(int c, bitset<N> &row) {
+	// 0x+0y = 10 is invalid equ
+	for(;c < (int)row.size()-1;++c) if(row[c] != 0)
+		return false;
+
+	return row[row.size()-1] == 0 ? false : true;
+}
+
+/*
+vector< bitset<N> > binMat(4);
+binMat[0] = bitset<N>(string("11111"));
+binMat[1] = bitset<N>(string("01011"));
+binMat[2] = bitset<N>(string("11101"));
+binMat[3] = bitset<N>(string("00111"));
+
+Note in bitset: First column here is the right hand side (1010)
+				binMat[1][0] = 1
+ */
+GaussStatus GaussElimMod2(vector<bitset<N>> & mat){
+	int n = mat.size(), m = mat[0].size()-1;
+	GaussStatus status = UNIQUE;
+
+	for(int r = 0, c = 0; r < n && c < m; ++r, ++c){
+		int stable_r = r;
+		for(int j = r; j < n; ++j)
+			if(mat[j][c] != 0) {
+				stable_r = j;
+				break;
+			}
+
+		if(stable_r != r)
+			swap(mat[stable_r], mat[r]);
+		else if(mat[r][c] == 0){
+			if(IsInvalidEqu(c, mat[r]))
+				return NO_SOLUTION;
+			--r, status = INFINITE_SOLUTION;	// c-th variable can be 0 or 1
+			// Actually NOT infinite. If 3 columns can be 0/1, then # solutions are 2^3
+			continue;
+		}
+
+		print(mat);
+
+		// Subtraction under mod 2 is just xor
+		for(int k = 0; k < n; ++k) if(k != r && mat[k][c] != 0)
+			mat[k] ^= mat[r];
+	}
+	return status;
+}
+
+///////////// Determinant /////////////
+ld determinant(vector<vector<ld> > mat) {
+	ld ret = 1;
+	for (int i = 0, j; i < sz(mat); i++) {
+		for (j = i; j < sz(mat); j++)
+			if ( !isZero(mat[j][i]))	break;
+		if (j == sz(mat))	return 0;
+		if (j != i)			ret = -ret, swap(mat[i], mat[j]);
+
+		ret *= mat[i][i];
+		ld inv = 1/mat[i][i];
+		for (int k = i; k < sz(mat); k++)
+			mat[i][k] *= inv;
+		for (j = i + 1; j < sz(mat); j++) {
+			for (int k = sz(mat) - 1; k >= i; k--)
+				mat[j][k] -= mat[i][k] * mat[j][i];
+		}
+	}
+	return ret;
+}
+
+//Find determinant%P
+ll determinant(vector<vector<ll> > mat, ll P) {
+	ll ret = 1;
+	for (int i = 0, j; i < sz(mat); i++) {
+		for (j = i; j < sz(mat); j++)
+			if (mat[j][i] != 0) break;
+		if (j == sz(mat)) return 0;
+		if (j != i) 
+			ret = -ret, ret = (ret%P+P)%P, swap(mat[i], mat[j]);
+
+		(ret *= mat[i][i]) %= P;
+		ll inv = modInverse(mat[i][i], P);
+		for (int k = i; k < sz(mat); k++)
+			(mat[i][k] *= inv) %= P;
+		for (j = i + 1; j < sz(mat); j++)
+			for (int k = sz(mat) - 1; k >= i; k--)
+			{
+				mat[j][k] -= mat[i][k] * mat[j][i];
+				mat[j][k] = (mat[j][k]%P+P)%P;
+			}
+	}
+	return (ret % P+P)%P;
+}
+```
