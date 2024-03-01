@@ -144,9 +144,9 @@ int find_all_solutions(int a, int b, int c, int minx, int maxx, int miny, int ma
 # Mobius function
 
 - $m(1) = 1$ 
-- $m(n) = 1$ if $n$ is a square free positive integer + Even number of prime factors: $m(2*3*5*7) = 1$
-- $m(n) = -1$ if $n$ is a square free positive integer + Odd number of prime factors: $m (2*3*5) = -1$
-- $m(n) = 0$ if n is $NOT$ a square free integer: $m(2*3*3*7) = 0$
+- $m(n) = 1$ if $n$ is a square free positive integer + Even number of prime factors: $m(2.3.5.7) = 1$
+- $m(n) = -1$ if $n$ is a square free positive integer + Odd number of prime factors: $m(2.3.5) = -1$
+- $m(n) = 0$ if n is $NOT$ a square free integer: $m(2.3.3.7) = 0$
 
 - `M(n)  = 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1`
 - `M(n) + 1 = 2, 0, 0, 1, 0, 2, 0, 1, 1, 2, 0, 1, 0, 2` 
