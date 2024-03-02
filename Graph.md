@@ -1,3 +1,185 @@
+# Trie
+
+## First problem for XOR
+- "+ x" — add integer x to multiset A.
+- "- x" — erase one occurrence of integer x from multiset A. It's guaranteed that at least one x is present in the multiset A before this query.
+- "? x" — you are given integer x and need to compute the value , i.e. the maximum value of bitwise exclusive OR (also know as XOR) of integer x and some integer y from the multiset A.
+```cpp
+class Trie 
+{
+    private:
+        struct node
+        {
+            ll cnt;
+            ll numOfchild;
+            node* child[33];
+        };
+        node* root;
+ 
+    public:
+        Trie()
+        {
+            root = create();
+            root->cnt = 1;
+        }
+ 
+        node* create()
+        {
+            node* nd = new node();
+            nd->numOfchild = nd->cnt = 0;
+            for (int i = 0; i < 33; i++)nd->child[i] = NULL;
+            return nd;
+        }
+ 
+        void add(ll x)
+        {
+            node* nd = root;
+            for (ll i = 32; i >= 0; i--)
+                if (x & (1ll << i))
+                {
+                    if (nd->child[i] == NULL) 
+                    {
+                        nd->numOfchild++;
+                        nd->child[i] = create();
+                    }
+                    nd = nd->child[i];
+                }
+                else continue;
+            nd->cnt++;
+        }
+ 
+        void Delete(ll x)
+        {
+            del(x, 32, root);
+        }
+ 
+        void del(ll x, ll i, node* nd)
+        {
+            while (i >= 0 && (x & (1ll << i)) == 0)i--;
+            if (i == -1)
+            {
+                nd->cnt--;
+                return;
+            }
+            del(x, i - 1, nd->child[i]);
+            if (nd->child[i]->cnt == 0 && nd->child[i]->numOfchild == 0)
+            {
+                nd->numOfchild--;
+                nd->child[i] = NULL;
+            }
+        }
+ 
+        ll getTheBest(ll x)
+        {
+            return solve(x, 32, root);
+        }
+ 
+        ll solve(ll x, ll i, node* nd)
+        {
+            ll fir;
+            while(i >= 0)
+            {
+                if (nd->child[i] != NULL)
+                {
+                    fir = i;
+                    if ((x & (1ll << i)) == 0)return (1ll << i) | solve(x, i - 1, nd->child[i]);
+                }
+                i--;
+            }
+            if (nd->cnt)return 0;
+            return (1ll << fir) | solve(x, fir - 1, nd->child[fir]);
+        }
+};
+```
+## Second Problem For XOR
+- Find the max XOR between any prefix and any postfix of array but these two segements don't intersect.
+``` cpp
+class Trie 
+{
+    private:
+        struct node
+        {
+            bool EndOfNumber;
+            node* child[40];
+        };
+        node* root;
+ 
+    public:
+        Trie()
+        {
+            root = create();
+            root->EndOfNumber = 1;
+        }
+ 
+        node* create()
+        {
+            node* nd = new node();
+            nd->EndOfNumber = 0;
+            for (int i = 0; i < 40; i++)nd->child[i] = NULL;
+            return nd;
+        }
+ 
+        void add(ll x)
+        {
+            node* nd = root;
+            for (ll i = 39; i >= 0; i--)
+            {
+                if (x & (1ll << i))
+                {
+                    if (nd->child[i] == NULL)nd->child[i] = create();
+                    nd = nd->child[i];
+                }
+            }
+            nd->EndOfNumber = 1;
+        }
+ 
+        ll getMax(ll x)
+        {
+            return search(x, 39, root);
+        }
+ 
+        ll search(ll x, ll i, node* nd)
+        {
+            ll j;
+            while (i >= 0)
+            {
+                if (nd->child[i] != NULL)
+                {
+                    j = i;
+                    if ((x & (1ll << i)) == 0)return (1ll << i) | search(x, i - 1, nd->child[i]);
+                }
+                i--;
+            }
+            if (nd->EndOfNumber)return 0;
+            return (1ll << j) | search(x, j - 1, nd->child[j]);
+        }
+};
+ 
+void solve()
+{
+    ll n, XOR = 0, XOR2 = 0;
+    cin >> n;
+    ll a[n + 1];
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> a[i];
+        XOR ^= a[i];
+    }
+    Trie trie = Trie();
+    ll ans = XOR;
+    for (int i = 1; i <= n; i++)
+    {
+        XOR2 ^= a[i];
+        trie.add(XOR2);
+        XOR ^= a[i];
+        ans = max(ans, XOR ^ trie.getMax(XOR));
+    }
+    cout << ans;
+    return;
+}
+```
+
+
 # HLD
 ```cpp
 #include <bits/stdc++.h>
